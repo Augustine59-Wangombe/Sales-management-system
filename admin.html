@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-o8+Z8U1hTz3B9KU1VtY9Xy0pIjgYtvK0X5e/eB35YJv6+QnI9M+2J3N+oqvU6C2uO+0iR+R0Oqxy0Oi1+ZxY9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Admin Panel</h1>
+</header>
+
+<div class="container">
+
+  <!-- Admin Login -->
+  <div id="adminContent" class="hidden">
+    <h2>Total Profit: <span id="profit">0</span></h2>
+
+    <!-- Add Item -->
+    <h3>Add Item</h3>
+    <input id="name" placeholder="Item Name">
+    <input id="price" type="number" placeholder="Selling Price">
+    <input id="cost" type="number" placeholder="Cost Price">
+    <input id="stock" type="number" placeholder="Stock">
+    <button onclick="addItem()">Add</button>
+
+    <!-- Remove Item -->
+    <h3>Remove Item</h3>
+    <input id="removeName" placeholder="Item Name">
+    <button onclick="removeItem()">Remove</button>
+
+    <!-- Record Sale -->
+    <h3>Record Sale</h3>
+    <input id="saleName" placeholder="Item Name">
+    <input id="saleQty" type="number" placeholder="Quantity Sold">
+    <button onclick="sellItem(document.getElementById('saleName').value, document.getElementById('saleQty').value)">Sell</button>
+
+    <h3>Inventory Overview</h3>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search items...">
+      <i class="fas fa-search"></i>
+    </div>
+
+    <!-- Inventory Table -->
+    <h3>Inventory Overview</h3>
+    <table id="inventoryTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Cost</th>
+          <th>Stock</th>
+          <th>Sold</th>
+          <th>Profit</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Login Section -->
+  <div id="loginPanel">
+    <h3>Admin Login</h3>
+    <input id="password" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
+
+</div>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>

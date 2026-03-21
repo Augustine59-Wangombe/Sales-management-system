@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sales Management System</title>
+  
+  <!-- Style -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Font Awesome CDN for search icon -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-pV6HxqQzX8z1o+URQbghjHE+R5dLQK5xL5k+U9S5hPtvkFH9nxdd+6k4FfI0/HXKb6a1sw5VBC0E8BwpS+lfGA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+<body>
+
+<header>
+  <h1>Sales Management System</h1>
+</header>
+
+<img src="images/Clothing business management in action.png" alt="" class="hero-img">
+
+<div class="container">
+
+  <h2>Inventory</h2>
+
+  <!-- Search Bar -->
+  <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search items...">
+    <i class="fa fa-search search-icon"></i>
+  </div>
+
+  <!-- Inventory Table -->
+  <table id="inventoryTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Cost</th>
+        <th>Stock</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Only navigation to admin -->
+  <a href="admin.html">
+    <button class="admin-btn">Admin Panel</button>
+  </a>
+
+</div>
+
+<script type="module" src="script.js"></script>
+
+</body>
+</html>
