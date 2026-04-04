@@ -1,9 +1,11 @@
+
 // =======================
 // Firebase Config
 // =======================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // Your Firebase credentials
 const firebaseConfig = {
@@ -21,3 +23,6 @@ const app = initializeApp(firebaseConfig);
 
 // Export Firestore database for use in script.js
 export const db = getFirestore(app);
+
+// Export Firebase Storage for use in script.js
+export const storage = getStorage(app);
