@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +15,11 @@
   <h1>Admin Panel</h1>
 </header>
 
+<nav>
+  <a href="index.html">Home</a>
+  <button onclick="logout()">Logout</button>
+</nav>
+
 <div class="container">
 
   <!-- Admin Login -->
@@ -21,23 +27,49 @@
     <h2>Total Profit: <span id="profit">0</span></h2>
 
     <!-- Add Item -->
-    <h3>Add Item</h3>
-    <input id="name" placeholder="Item Name">
-    <input id="price" type="number" placeholder="Selling Price">
-    <input id="cost" type="number" placeholder="Cost Price">
-    <input id="stock" type="number" placeholder="Stock">
-    <button onclick="addItem()">Add</button>
+    <div class="form-section">
+      <h3>Add Item</h3>
+      <label for="name">Item Name:</label><br>
+      <input id="name" placeholder="Item Name"><br>
+      <label for="price">Selling Price:</label><br>
+      <input id="price" type="number" placeholder="Selling Price"><br>
+      <label for="cost">Cost Price:</label><br>
+      <input id="cost" type="number" placeholder="Cost Price"><br>
+      <label for="stock">Stock:</label><br>
+      <input id="stock" type="number" placeholder="Stock"><br>
+      <label for="image">Item Image:</label><br>
+      <input id="image" type="file" accept="image/*"><br>
+      <button onclick="addItem()">Add</button>
+    </div>
 
     <!-- Remove Item -->
-    <h3>Remove Item</h3>
-    <input id="removeName" placeholder="Item Name">
-    <button onclick="removeItem()">Remove</button>
+    <div class="form-section">
+      <h3>Remove Item</h3>
+      <label for="removeName">Item Name:</label><br>
+      <input id="removeName" list="itemList" placeholder="Item Name"><br>
+      <button onclick="removeItem()">Remove</button>
+    </div>
 
     <!-- Record Sale -->
-    <h3>Record Sale</h3>
-    <input id="saleName" placeholder="Item Name">
-    <input id="saleQty" type="number" placeholder="Quantity Sold">
-    <button onclick="sellItem(document.getElementById('saleName').value, document.getElementById('saleQty').value)">Sell</button>
+    <div class="form-section">
+      <h3>Record Sale</h3>
+      <label for="saleName">Item Name:</label><br>
+      <input id="saleName" list="itemList" placeholder="Item Name"><br>
+      <label for="saleQty">Quantity Sold:</label><br>
+      <input id="saleQty" type="number" placeholder="Quantity Sold"><br>
+      <label for="salePrice">Selling Price per Item:</label><br>
+      <input id="salePrice" type="number" placeholder="Selling Price"><br>
+      <label for="paymentMethod">Payment Method:</label><br>
+      <select id="paymentMethod">
+        <option value="cash">Cash</option>
+        <option value="credit">Credit</option>
+      </select><br>
+      <label for="saleDate">Date:</label><br>
+      <input id="saleDate" type="date"><br>
+      <label for="saleTime">Time:</label><br>
+      <input id="saleTime" type="time"><br>
+      <button onclick="sellItem()">Sell</button>
+    </div>
 
     <h3>Inventory Overview</h3>
     <div class="search-container">
@@ -46,10 +78,10 @@
     </div>
 
     <!-- Inventory Table -->
-    <h3>Inventory Overview</h3>
     <table id="inventoryTable">
       <thead>
         <tr>
+          <th>Image</th>
           <th>Name</th>
           <th>Price</th>
           <th>Cost</th>
@@ -60,7 +92,28 @@
       </thead>
       <tbody></tbody>
     </table>
+
+    <h3>Sales History</h3>
+    <label for="historyDate">Select Date:</label>
+    <input id="historyDate" type="date">
+    <button onclick="filterSales()">Filter</button>
+    <table id="salesTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Total</th>
+          <th>Payment</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
+
+  <datalist id="itemList"></datalist>
 
   <!-- Login Section -->
   <div id="loginPanel">
