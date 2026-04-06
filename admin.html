@@ -1,13 +1,20 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-o8+Z8U1hTz3B9KU1VtY9Xy0pIjgYtvK0X5e/eB35YJv6+QnI9M+2J3N+oqvU6C2uO+0iR+R0Oqxy0Oi1+ZxY9A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
   <link rel="stylesheet" href="style.css">
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    integrity="sha512-pV6HxqQzX8z1o+URQbghjHE+R5dLQK5xL5k+U9S5hPtvkFH9nxdd+6k4FfI0/HXKb6a1sw5VBC0E8BwpS+lfGA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
 </head>
 <body>
 
@@ -17,7 +24,6 @@
 
 <nav>
   <a href="index.html">Home</a>
-  <button onclick="logout()">Logout</button>
 </nav>
 
 <div class="container">
@@ -26,52 +32,64 @@
   <div id="adminContent" class="hidden">
     <h2>Total Profit: <span id="profit">0</span></h2>
 
-    <!-- Add Item -->
-    <div class="form-section">
+    <!-- Navigation Bar for Pages -->
+    <nav class="page-nav">
+      <button class="nav-btn active" onclick="showPage('add-item', this)">Add Item</button>
+      <button class="nav-btn" onclick="showPage('remove-item', this)">Remove Item</button>
+      <button class="nav-btn" onclick="showPage('record-sale', this)">Record Sale</button>
+      <button class="nav-btn" onclick="showPage('inventory', this)">Inventory Overview</button>
+      <button class="nav-btn" onclick="showPage('sales-history', this)">Sales History</button>
+    </nav>
+
+    <!-- Add Item Page -->
+    <div id="add-item" class="page">
       <h3>Add Item</h3>
-      <label for="name">Item Name:</label><br>
-      <input id="name" placeholder="Item Name"><br>
-      <label for="price">Selling Price:</label><br>
-      <input id="price" type="number" placeholder="Selling Price"><br>
-      <label for="cost">Cost Price:</label><br>
-      <input id="cost" type="number" placeholder="Cost Price"><br>
-      <label for="stock">Stock:</label><br>
-      <input id="stock" type="number" placeholder="Stock"><br>
-      <label for="image">Item Image:</label><br>
-      <input id="image" type="file" accept="image/*"><br>
+      <label for="name">Item Name:</label>
+      <input id="name" placeholder="Item Name">
+      <label for="price">Selling Price:</label>
+      <input id="price" type="number" placeholder="Selling Price">
+      <label for="cost">Cost Price:</label>
+      <input id="cost" type="number" placeholder="Cost Price">
+      <label for="stock">Stock:</label>
+      <input id="stock" type="number" placeholder="Stock">
+      <label for="image">Item Image:</label>
+      <input id="image" type="file" accept="image/*">
       <button onclick="addItem()">Add</button>
     </div>
 
-    <!-- Remove Item -->
-    <div class="form-section">
+    <!-- Remove Item Page -->
+    <div id="remove-item" class="page" style="display: none;">
       <h3>Remove Item</h3>
-      <label for="removeName">Item Name:</label><br>
-      <input id="removeName" list="itemList" placeholder="Item Name"><br>
+      <label for="removeName">Item Name:</label>
+      <input id="removeName" list="itemList" placeholder="Item Name">
       <button onclick="removeItem()">Remove</button>
     </div>
 
-    <!-- Record Sale -->
-    <div class="form-section">
+    <!-- Record Sale Page -->
+    <div id="record-sale" class="page" style="display: none;">
       <h3>Record Sale</h3>
-      <label for="saleName">Item Name:</label><br>
-      <input id="saleName" list="itemList" placeholder="Item Name"><br>
-      <label for="saleQty">Quantity Sold:</label><br>
-      <input id="saleQty" type="number" placeholder="Quantity Sold"><br>
-      <label for="salePrice">Selling Price per Item:</label><br>
-      <input id="salePrice" type="number" placeholder="Selling Price"><br>
-      <label for="paymentMethod">Payment Method:</label><br>
+      <label for="saleName">Item Name:</label>
+      <input id="saleName" list="itemList" placeholder="Item Name">
+      <label for="saleQty">Quantity Sold:</label>
+      <input id="saleQty" type="number" placeholder="Quantity Sold">
+      <label for="salePrice">Selling Price per Item:</label>
+      <input id="salePrice" type="number" placeholder="Selling Price">
+      <label for="paymentMethod">Payment Method:</label>
       <select id="paymentMethod">
-        <option value="cash">Cash</option>
-        <option value="credit">Credit</option>
-      </select><br>
-      <label for="saleDate">Date:</label><br>
-      <input id="saleDate" type="date"><br>
-      <label for="saleTime">Time:</label><br>
-      <input id="saleTime" type="time"><br>
+        <option value="Cash">Cash</option>
+        <option value="Credit">Credit</option>
+        <option value="Mpesa">Mpesa</option>
+      </select>
+      <label for="saleDate">Date:</label>
+      <input id="saleDate" type="date">
+      <label for="saleTime">Time:</label>
+      <input id="saleTime" type="time">
       <button onclick="sellItem()">Sell</button>
     </div>
 
-    <h3>Inventory Overview</h3>
+    <!-- Inventory Overview Page -->
+    <div id="inventory" class="page" style="display: none;">
+      <h3>Inventory Overview</h3>
     <div class="search-container">
       <input type="text" id="searchInput" placeholder="Search items...">
       <i class="fas fa-search"></i>
@@ -92,25 +110,31 @@
       </thead>
       <tbody></tbody>
     </table>
+    </div>
 
-    <h3>Sales History</h3>
-    <label for="historyDate">Select Date:</label>
-    <input id="historyDate" type="date">
-    <button onclick="filterSales()">Filter</button>
-    <table id="salesTable">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Item</th>
-          <th>Quantity</th>
-          <th>Price</th>
-          <th>Total</th>
-          <th>Payment</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <!-- Sales History Page -->
+    <div id="sales-history" class="page" style="display: none;">
+      <h3>Sales History</h3>
+      <label for="historyDate">Select Date:</label>
+      <input id="historyDate" type="date">
+      <button onclick="filterSales()">Filter</button>
+
+      <table id="salesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Payment</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
   </div>
 
   <datalist id="itemList"></datalist>
@@ -118,7 +142,13 @@
   <!-- Login Section -->
   <div id="loginPanel">
     <h3>Admin Login</h3>
-    <input id="password" type="password" placeholder="Password">
+    <div class="password-field">
+      <input id="password" type="password" placeholder="Password">
+      <label class="show-password">
+        <input id="showPassword" type="checkbox" onchange="togglePassword()">
+        Show password
+      </label>
+    </div>
     <button onclick="login()">Login</button>
   </div>
 
