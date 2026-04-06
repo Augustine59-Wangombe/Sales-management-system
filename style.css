@@ -1,88 +1,168 @@
 
+/* =======================
+   General Styles
+======================= */
 body {
-    font-family: Arial;
-    background: #f4f6f9;
-    margin: 0;
-  }
-  
-  header {
-    background: #0d6efd;
-    color: #fff;
-    padding: 15px;
-    text-align: center;
-  }
-  
-  .container {
-    padding: 20px;
-  }
-  
-  input, button {
-    padding: 8px;
-    margin: 5px;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-  }
-  
-  th, td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: center;
-  }
-  
-  th {
-    background: #0d6efd;
-    color: white;
-  }
-  
-  .admin {
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    margin-top: 20px;
-  }
-  
-  .hidden {
-    display: none;
-  }
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+}
 
+header {
+  background: #0d6efd;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+}
 
-  .hero-img {
-    width: 100%;
-    max-height: 300px;
-    object-fit: cover;
-  }
-  
-  .admin-btn {
-    background: #198754;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    margin-top: 15px;
-    cursor: pointer;
-  }
+.container {
+  padding: 20px;
+}
 
-  .search-container {
-    position: relative;
-    margin-bottom: 15px;
-    display: inline-block;
-  }
-  
-  .search-container input {
-    padding-left: 30px;
-    width: 250px;
-  }
-  
-  .search-container i {
-    position: absolute;
-    top: 50%;
-    left: 8px;
-    transform: translateY(-50%);
-    color: #0d6efd;
-  }
+input, button, select {
+  padding: 10px 12px;
+  margin: 5px 0;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.page {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+  margin-bottom: 24px;
+}
+
+.page h3 {
+  margin-top: 0;
+  margin-bottom: 22px;
+  color: #0d6efd;
+  font-size: 1.6rem;
+  letter-spacing: 0.4px;
+}
+
+.page label {
+  display: block;
+  margin-bottom: 10px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.page input,
+.page select {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  background: #f8fafc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.page input:focus,
+.page select:focus {
+  outline: none;
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.12);
+  background: #ffffff;
+}
+
+.page button {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  margin-top: 18px;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(13, 110, 253, 0.18);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.page button:hover {
+  background: #0b5ed7;
+  transform: translateY(-1px);
+}
+
+.page .search-container {
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: 20px;
+}
+
+.page table {
+  margin-top: 20px;
+}
+
+.table-header-row th {
+  background: #0d6efd;
+  color: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  table-layout: fixed; /* ensures columns stay aligned */
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+  word-wrap: break-word;
+}
+
+th {
+  background: #0d6efd;
+  color: white;
+}
+
+.admin {
+  background: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.hero-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.admin-btn {
+  background: #198754;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  margin-top: 15px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.search-container {
+  position: relative;
+  margin-bottom: 15px;
+  display: inline-block;
+}
+
+.search-container input {
+  padding-left: 30px;
+  width: 250px;
+}
+
+.search-container i {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  color: #0d6efd;
+}
 
 nav {
   background: #f8f9fa;
@@ -102,6 +182,46 @@ nav a, nav button {
   border-radius: 3px;
 }
 
+/* Page Navigation Bar */
+.page-nav {
+  background: #e9ecef;
+  padding: 15px;
+  text-align: center;
+  border-bottom: 2px solid #0d6efd;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.nav-btn {
+  padding: 10px 20px;
+  border: 2px solid #0d6efd;
+  background: white;
+  color: #0d6efd;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: #0d6efd;
+  color: white;
+}
+
+.nav-btn.active {
+  background: #0d6efd;
+  color: white;
+}
+
+/* Page Content */
+.page {
+  animation: fadeIn 0.3s ease;
+}
+
 .form-section {
   background: white;
   padding: 15px;
@@ -116,7 +236,7 @@ nav a, nav button {
   font-weight: bold;
 }
 
-.form-section input {
+.form-section input, .form-section select {
   width: 100%;
   margin-bottom: 10px;
   box-sizing: border-box;
@@ -131,4 +251,169 @@ nav a, nav button {
   border-radius: 3px;
 }
 
+/* =======================
+   Images in Tables
+======================= */
+#inventoryTable,
+#salesTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 20px;
+}
 
+#inventoryTable thead,
+#salesTable thead {
+  display: none;
+}
+
+#inventoryTable tbody,
+#salesTable tbody {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+#inventoryTable tr,
+#salesTable tr {
+  display: grid;
+  gap: 18px;
+  align-items: center;
+  background: #ffffff;
+  padding: 22px;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+  border: none;
+  min-height: 160px;
+}
+
+#inventoryTable tr {
+  grid-template-columns: 120px 1fr;
+}
+
+#salesTable tr {
+  grid-template-columns: 1fr;
+}
+
+#inventoryTable td,
+#salesTable td {
+  border: none;
+  padding: 0;
+  text-align: left;
+}
+
+#inventoryTable img,
+#salesTable img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+}
+
+#inventoryTable td:not(:first-child),
+#salesTable td {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+#inventoryTable td:first-child,
+#salesTable td:first-child {
+  display: block;
+  border-bottom: none;
+}
+
+#inventoryTable td:not(:first-child)::before,
+#salesTable td::before {
+  content: attr(data-label);
+  font-weight: 600;
+  color: #64748b;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+#inventoryTable td:not(:first-child) span,
+#salesTable td span {
+  flex: 1;
+  text-align: right;
+  color: #334155;
+  font-weight: 600;
+}
+
+#inventoryTable td[data-label="Name"],
+#salesTable td[data-label="Item"] {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0d6efd;
+}
+
+#inventoryTable td[data-label="Price"],
+#inventoryTable td[data-label="Cost"],
+#inventoryTable td[data-label="Stock"],
+#inventoryTable td[data-label="Sold"],
+#inventoryTable td[data-label="Profit"],
+#salesTable td[data-label="Quantity"],
+#salesTable td[data-label="Price"],
+#salesTable td[data-label="Total"],
+#salesTable td[data-label="Payment"] {
+  color: #334155;
+  font-weight: 600;
+}
+
+#inventoryTable tr:hover,
+#salesTable tr:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+}
+
+/* =======================
+   Responsive Card Layout
+======================= */
+@media (max-width: 900px) {
+  #inventoryTable tbody,
+  #salesTable tbody {
+    grid-template-columns: 1fr;
+  }
+
+  #inventoryTable tr,
+  #salesTable tr {
+    grid-template-columns: 100px 1fr;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  #inventoryTable img,
+  #salesTable img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (max-width: 600px) {
+  #inventoryTable tr,
+  #salesTable tr {
+    grid-template-columns: 1fr;
+  }
+
+  #inventoryTable img,
+  #salesTable img {
+    width: 100%;
+    height: 180px;
+  }
+}
+
+/* =======================
+   Animation
+======================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
