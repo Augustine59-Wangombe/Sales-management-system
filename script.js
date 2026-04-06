@@ -1,53 +1,43 @@
 
+
 // =======================
-// Firebase Firestore Functions
+// Firebase Imports
 // =======================
 import { db } from './firebase.js';
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { storage } from './firebase.js';
-import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+import {
+  collection, addDoc, getDocs, doc, deleteDoc, updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // =======================
 // Admin Password
 // =======================
-const ADMIN_PASSWORD = "admin123"; // Change as needed
+const ADMIN_PASSWORD = "admin123";
 
 // =======================
-// Inventory Data
+// Data
 // =======================
 let items = [];
 let sales = [];
 
 // =======================
-// Load Inventory
+// Load Items
 // =======================
 async function loadItems() {
-  const querySnapshot = await getDocs(collection(db, "items"));
-  items = [];
-  querySnapshot.forEach(docSnap => {
-    items.push({ id: docSnap.id, ...docSnap.data() });
-  });
+  try {
+    const querySnapshot = await getDocs(collection(db, "items"));
+    items = [];
+    querySnapshot.forEach(docSnap => items.push({ id: docSnap.id, ...docSnap.data() }));
 
-  // ------------------------
-  // Page-specific rendering
-  // ------------------------
-  if (document.getElementById('profit')) {
-    loadSales(); // Load sales for admin
-    // Set current date and time for sale form
-    const now = new Date();
-    document.getElementById('saleDate').value = now.toISOString().split('T')[0];
-    document.getElementById('saleTime').value = now.toTimeString().split(' ')[0].substring(0,5);
-    renderAdminInventory(); // Admin page
-
-    // Auto-fill sale price when item selected
-    document.getElementById('saleName').addEventListener('input', function() {
-      const item = items.find(i => i.name === this.value);
-      if (item) {
-        document.getElementById('salePrice').value = item.price;
-      }
-    });
-  } else {
-    renderIndexInventory(); // Index page
+    if (document.getElementById('profit')) {
+      await loadSales();
+      setDateTime();
+      renderAdminInventory();
+      setupSaleAutoFill();
+    } else {
+      renderIndexInventory();
+    }
+  } catch (error) {
+    console.error("Load Items Error:", error);
   }
 }
 
@@ -55,38 +45,41 @@ async function loadItems() {
 // Load Sales
 // =======================
 async function loadSales() {
-  const querySnapshot = await getDocs(collection(db, "sales"));
-  sales = [];
-  querySnapshot.forEach(docSnap => {
-    sales.push({ id: docSnap.id, ...docSnap.data() });
-  });
-  renderSalesHistory();
+  try {
+    const querySnapshot = await getDocs(collection(db, "sales"));
+    sales = [];
+    querySnapshot.forEach(docSnap => sales.push({ id: docSnap.id, ...docSnap.data() }));
+    renderSalesHistory();
+  } catch (error) {
+    console.error("Load Sales Error:", error);
+  }
 }
 
 // =======================
-// Render Sales History
+// Render Index Inventory
 // =======================
-function renderSalesHistory(filteredSales = sales) {
-  const tbody = document.querySelector('#salesTable tbody');
+function renderIndexInventory() {
+  const tbody = document.querySelector('#inventoryTable tbody');
+  if (!tbody) return;
   tbody.innerHTML = '';
 
-  filteredSales.forEach(sale => {
+  items.forEach(item => {
+    const imageHtml = item.imageUrl
+      ? `<img src="${item.imageUrl}" style="width:100px;height:100px;border-radius:6px;">`
+      : 'No Image';
+
     tbody.innerHTML += `
       <tr>
-        <td>${sale.date}</td>
-        <td>${sale.time}</td>
-        <td>${sale.itemName}</td>
-        <td>${sale.quantity}</td>
-        <td>${sale.salePrice}</td>
-        <td>${sale.total}</td>
-        <td>${sale.paymentMethod}</td>
-      </tr>
-    `;
+        <td data-label="Image">${imageHtml}</td>
+        <td data-label="Name">${item.name}</td>
+        <td data-label="Price">${item.price}</td>
+        <td data-label="Stock">${item.stock}</td>
+      </tr>`;
   });
 }
 
 // =======================
-// Admin Page Render
+// Render Admin Inventory
 // =======================
 function renderAdminInventory() {
   const tbody = document.querySelector('#inventoryTable tbody');
@@ -95,29 +88,28 @@ function renderAdminInventory() {
 
   items.forEach(item => {
     const soldQty = item.sold || 0;
-    // Calculate actual profit from sales
     const itemSales = sales.filter(s => s.itemName === item.name);
     const itemProfit = itemSales.reduce((sum, s) => sum + (s.salePrice - item.cost) * s.quantity, 0);
     totalProfit += itemProfit;
 
-    const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" style="width: 50px; height: 50px;">` : 'No Image';
+    const imageHtml = item.imageUrl
+      ? `<img src="${item.imageUrl}" style="width:100px;height:100px;border-radius:6px;">`
+      : 'No Image';
 
     tbody.innerHTML += `
       <tr>
-        <td>${imageHtml}</td>
-        <td>${item.name}</td>
-        <td>${item.price}</td>
-        <td>${item.cost}</td>
-        <td>${item.stock}</td>
-        <td>${soldQty}</td>
-        <td>${itemProfit}</td>
-      </tr>
-    `;
+        <td data-label="Image">${imageHtml}</td>
+        <td data-label="Name">${item.name}</td>
+        <td data-label="Price">${item.price}</td>
+        <td data-label="Cost">${item.cost}</td>
+        <td data-label="Stock">${item.stock}</td>
+        <td data-label="Sold">${soldQty}</td>
+        <td data-label="Profit">${itemProfit.toLocaleString()}</td>
+      </tr>`;
   });
 
-  document.getElementById('profit').innerText = totalProfit;
+  document.getElementById('profit').innerText = "KES " + totalProfit.toLocaleString();
 
-  // Populate item datalist
   const datalist = document.getElementById('itemList');
   datalist.innerHTML = '';
   items.forEach(item => {
@@ -128,172 +120,218 @@ function renderAdminInventory() {
 }
 
 // =======================
-// Index Page Render
+// Add Item with Cloudinary
 // =======================
-function renderIndexInventory() {
-  const tbody = document.querySelector('#inventoryTable tbody');
-  tbody.innerHTML = '';
+window.addItem = async function () {
+  try {
+    const name = document.getElementById('name').value.trim();
+    const price = parseFloat(document.getElementById('price').value);
+    const cost = parseFloat(document.getElementById('cost').value);
+    const stock = parseInt(document.getElementById('stock').value);
+    const imageFile = document.getElementById('image').files[0];
 
-  items.forEach(item => {
-    const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" style="width: 50px; height: 50px;">` : 'No Image';
+    if (!name || isNaN(price) || isNaN(cost) || isNaN(stock)) {
+      alert("Please fill all fields correctly!");
+      return;
+    }
 
-    tbody.innerHTML += `
-      <tr>
-        <td>${imageHtml}</td>
-        <td>${item.name}</td>
-        <td>${item.price}</td>
-        <td>${item.cost}</td>
-        <td>${item.stock}</td>
-      </tr>
-    `;
-  });
-}
+    let imageUrl = '';
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+      formData.append("upload_preset", "Sales-Items");
+      formData.append("folder", "assent");
 
-// =======================
-// Add Item (Admin Only)
-// =======================
-window.addItem = async function() {
-  const name = document.getElementById('name').value;
-  const price = parseFloat(document.getElementById('price').value);
-  const cost = parseFloat(document.getElementById('cost').value);
-  const stock = parseInt(document.getElementById('stock').value);
-  const imageFile = document.getElementById('image').files[0];
+      const response = await fetch("https://api.cloudinary.com/v1_1/dalugau16/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+      imageUrl = data.secure_url;
+    }
 
-  if (!name || isNaN(price) || isNaN(cost) || isNaN(stock)) {
-    alert("Please fill all fields correctly!");
-    return;
+    await addDoc(collection(db, "items"), { name, price, cost, stock, sold: 0, imageUrl });
+    alert("Item added successfully!");
+    await loadItems();
+
+    document.getElementById('name').value = '';
+    document.getElementById('price').value = '';
+    document.getElementById('cost').value = '';
+    document.getElementById('stock').value = '';
+    document.getElementById('image').value = '';
+
+  } catch (error) {
+    console.error("Add Item Error:", error);
+    alert("Error adding item: " + error.message);
   }
-
-  let imageUrl = '';
-  if (imageFile) {
-    const storageRef = ref(storage, `items/${Date.now()}_${imageFile.name}`);
-    const snapshot = await uploadBytes(storageRef, imageFile);
-    imageUrl = await getDownloadURL(snapshot.ref);
-  }
-
-  await addDoc(collection(db, "items"), { name, price, cost, stock, sold: 0, imageUrl });
-  loadItems();
-
-  // Clear inputs
-  document.getElementById('name').value = '';
-  document.getElementById('price').value = '';
-  document.getElementById('cost').value = '';
-  document.getElementById('stock').value = '';
-  document.getElementById('image').value = '';
 };
 
 // =======================
-// Remove Item (Admin Only)
+// Remove Item
 // =======================
-window.removeItem = async function() {
-  const name = document.getElementById('removeName').value;
-  const item = items.find(i => i.name === name);
-
-  if (!item) {
-    alert("Item not found!");
-    return;
+window.removeItem = async function () {
+  try {
+    const name = document.getElementById('removeName').value.trim();
+    const item = items.find(i => i.name === name);
+    if (!item) return alert("Item not found!");
+    await deleteDoc(doc(db, "items", item.id));
+    alert("Item removed successfully!");
+    await loadItems();
+    document.getElementById('removeName').value = '';
+  } catch (error) {
+    console.error("Remove Error:", error);
   }
-
-  await deleteDoc(doc(db, "items", item.id));
-  loadItems();
-  document.getElementById('removeName').value = '';
 };
 
 // =======================
-// Record Sale (Admin Only)
+// Record Sale
 // =======================
-window.sellItem = async function() {
-  const itemName = document.getElementById('saleName').value;
-  const quantity = parseInt(document.getElementById('saleQty').value);
-  const salePrice = parseFloat(document.getElementById('salePrice').value);
-  const paymentMethod = document.getElementById('paymentMethod').value;
-  const date = document.getElementById('saleDate').value;
-  const time = document.getElementById('saleTime').value;
+window.sellItem = async function () {
+  try {
+    const itemName = document.getElementById('saleName').value.trim();
+    const quantity = parseInt(document.getElementById('saleQty').value);
+    const salePrice = parseFloat(document.getElementById('salePrice').value);
+    const paymentMethod = document.getElementById('paymentMethod').value;
+    const date = document.getElementById('saleDate').value;
+    const time = document.getElementById('saleTime').value;
 
-  const item = items.find(i => i.name === itemName);
+    const item = items.find(i => i.name === itemName);
+    if (!item) return alert("Item not found!");
+    if (quantity > item.stock) return alert("Not enough stock!");
+    if (isNaN(salePrice) || salePrice <= 0) return alert("Invalid selling price!");
 
-  if (!item) return alert("Item not found!");
-  if (quantity > item.stock) return alert("Not enough stock!");
-  if (isNaN(salePrice) || salePrice <= 0) return alert("Invalid selling price!");
-  if (!date || !time) return alert("Please select date and time!");
+    const total = salePrice * quantity;
 
-  const total = salePrice * quantity;
+    await addDoc(collection(db, "sales"), { itemName, quantity, salePrice, total, paymentMethod, date, time, timestamp: new Date() });
+    await updateDoc(doc(db, "items", item.id), { stock: item.stock - quantity, sold: (item.sold || 0) + quantity });
 
-  // Record the sale
-  await addDoc(collection(db, "sales"), {
-    itemName,
-    quantity,
-    salePrice,
-    total,
-    paymentMethod,
-    date,
-    time,
-    timestamp: new Date()
-  });
+    alert("Sale recorded successfully!");
+    await loadItems();
 
-  // Update item stock and sold
-  const itemRef = doc(db, "items", item.id);
-  await updateDoc(itemRef, {
-    stock: item.stock - quantity,
-    sold: (item.sold || 0) + quantity
-  });
+    document.getElementById('saleName').value = '';
+    document.getElementById('saleQty').value = '';
+    document.getElementById('salePrice').value = '';
+    setDateTime();
 
-  loadItems();
-  loadSales();
-
-  // Clear inputs
-  document.getElementById('saleName').value = '';
-  document.getElementById('saleQty').value = '';
-  document.getElementById('salePrice').value = '';
-  document.getElementById('saleDate').value = '';
-  document.getElementById('saleTime').value = '';
+  } catch (error) {
+    console.error("Sale Error:", error);
+    alert("Error recording sale: " + error.message);
+  }
 };
 
 // =======================
 // Admin Login
 // =======================
-window.login = function() {
+window.login = function () {
   const pass = document.getElementById('password').value;
   if (pass === ADMIN_PASSWORD) {
     document.getElementById('adminContent').classList.remove('hidden');
     document.getElementById('loginPanel').classList.add('hidden');
+    loadItems();
     alert("Login successful");
-  } else {
-    alert("Wrong password");
-  }
+  } else alert("Wrong password");
+};
+
+window.togglePassword = function () {
+  const passwordInput = document.getElementById('password');
+  if (!passwordInput) return;
+  passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
 };
 
 // =======================
-// Filter Sales by Date
+// Filter Sales
 // =======================
-window.filterSales = function() {
+window.filterSales = function () {
   const selectedDate = document.getElementById('historyDate').value;
-  if (!selectedDate) {
-    renderSalesHistory(); // Show all if no date selected
-    return;
-  }
-  const filtered = sales.filter(sale => sale.date === selectedDate);
+  const filtered = selectedDate ? sales.filter(s => s.date === selectedDate) : sales;
   renderSalesHistory(filtered);
 };
 
 // =======================
-// Inventory Search Filter (Index Page)
+// Render Sales
+// =======================
+function renderSalesHistory(filteredSales = sales) {
+  const tbody = document.querySelector('#salesTable tbody');
+  tbody.innerHTML = '';
+  filteredSales.forEach(sale => {
+    tbody.innerHTML += `
+      <tr>
+        <td data-label="Date">${sale.date}</td>
+        <td data-label="Time">${sale.time}</td>
+        <td data-label="Item">${sale.itemName}</td>
+        <td data-label="Quantity">${sale.quantity}</td>
+        <td data-label="Price">${sale.salePrice}</td>
+        <td data-label="Total">${sale.total}</td>
+        <td data-label="Payment">${sale.paymentMethod}</td>
+      </tr>`;
+  });
+}
+
+// =======================
+// Auto-fill Sale Price
+// =======================
+function setupSaleAutoFill() {
+  const saleInput = document.getElementById('saleName');
+  if (!saleInput) return;
+  saleInput.addEventListener('input', function () {
+    const item = items.find(i => i.name === this.value);
+    if (item) document.getElementById('salePrice').value = item.price;
+  });
+}
+
+// =======================
+// Search Filter
 // =======================
 const searchInput = document.getElementById('searchInput');
 if (searchInput) {
-  searchInput.addEventListener('keyup', function() {
+  searchInput.addEventListener('keyup', function () {
     const filter = this.value.toLowerCase();
-    const tbody = document.querySelector('#inventoryTable tbody');
-    Array.from(tbody.getElementsByTagName('tr')).forEach(row => {
-      const name = row.cells[1].innerText.toLowerCase();
-      row.style.display = name.includes(filter) ? '' : 'none';
+    document.querySelectorAll('#inventoryTable tbody tr').forEach(row => {
+      row.style.display = row.cells[1].innerText.toLowerCase().includes(filter) ? '' : 'none';
     });
   });
 }
 
 // =======================
+// Set Date & Time
+// =======================
+function setDateTime() {
+  const saleDate = document.getElementById('saleDate');
+  const saleTime = document.getElementById('saleTime');
+  if (saleDate && saleTime) {
+    const now = new Date();
+    saleDate.value = now.toISOString().split('T')[0];
+    saleTime.value = now.toTimeString().substring(0, 5);
+  }
+}
+
+// =======================
+// Page Navigation
+// =======================
+window.showPage = function (pageId, button) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(page => {
+    page.style.display = 'none';
+  });
+
+  // Remove active class from all buttons
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+
+  // Show selected page
+  const page = document.getElementById(pageId);
+  if (page) {
+    page.style.display = 'block';
+  }
+
+  // Add active class to clicked button
+  if (button) {
+    button.classList.add('active');
+  }
+};
+
+// =======================
 // Initialize
 // =======================
 loadItems();
-
-
