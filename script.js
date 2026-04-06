@@ -220,6 +220,21 @@ window.sellItem = async function () {
 };
 
 // =======================
+// Delete Sale History
+// =======================
+window.deleteSale = async function (saleId) {
+  try {
+    if (!confirm('Delete this sale history entry?')) return;
+    await deleteDoc(doc(db, "sales", saleId));
+    alert('Sale history entry deleted successfully.');
+    await loadItems();
+  } catch (error) {
+    console.error('Delete Sale Error:', error);
+    alert('Error deleting sale history: ' + error.message);
+  }
+};
+
+// =======================
 // Admin Login
 // =======================
 window.login = function () {
@@ -263,6 +278,7 @@ function renderSalesHistory(filteredSales = sales) {
         <td data-label="Price">${sale.salePrice}</td>
         <td data-label="Total">${sale.total}</td>
         <td data-label="Payment">${sale.paymentMethod}</td>
+        <td data-label="Action"><button class="delete-btn" onclick="deleteSale('${sale.id}')">Delete</button></td>
       </tr>`;
   });
 }
